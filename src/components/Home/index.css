@@ -1,0 +1,27 @@
+.home-container {
+  background-color: #000000;
+  min-height: 100vh;
+  padding: 40px;
+  color: #ffffff;
+}
+
+.home-container h1 {
+  font-size: 42px;
+  max-width: 500px;
+}
+
+.home-container p {
+  color: #f8fafc;
+  max-width: 450px;
+  margin-top: 15px;
+}
+
+.home-container button {
+  margin-top: 25px;
+  background-color: #4f46e5;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+}

@@ -1,0 +1,20 @@
+.job-card {
+  background-color: #272727;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+.job-card img {
+  width: 60px;
+}
+
+.job-card h1 {
+  font-size: 20px;
+}
+
+.job-card p {
+  color: #f8fafc;
+  font-size: 14px;
+}
