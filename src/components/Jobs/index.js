@@ -23,6 +23,13 @@ const salaryRangesList = [
   {salaryRangeId: '4000000', label: '40 LPA and above'},
 ]
 
+const locationList = [
+  {label: 'Hyderabad', locationId: 'Hyderabad'},
+  {label: 'Bangalore', locationId: 'Bangalore'},
+  {label: 'Chennai', locationId: 'Chennai'},
+  {label: 'Delhi', locationId: 'Delhi'},
+]
+
 const apiStatusConstants = {
   initial: 'INITIAL',
   success: 'SUCCESS',
@@ -37,6 +44,7 @@ class Jobs extends Component {
     employmentTypes: [],
     salaryRange: '',
     searchInput: '',
+    locations: [],
   }
 
   componentDidMount() {
@@ -45,11 +53,14 @@ class Jobs extends Component {
 
   getJobs = async () => {
     this.setState({apiStatus: apiStatusConstants.inProgress})
+
     const jwtToken = Cookies.get('jwt_token')
-    const {employmentTypes, salaryRange, searchInput} = this.state
+    const {employmentTypes, salaryRange, searchInput, locations} = this.state
 
     const employmentType = employmentTypes.join(',')
-    const apiUrl = `https://apis.ccbp.in/jobs?employment_type=${employmentType}&minimum_package=${salaryRange}&search=${searchInput}`
+    const location = locations.join(',')
+
+    const apiUrl = `https://apis.ccbp.in/jobs?employment_type=${employmentType}&minimum_package=${salaryRange}&search=${searchInput}&location=${location}`
 
     const options = {
       headers: {
@@ -59,8 +70,10 @@ class Jobs extends Component {
     }
 
     const response = await fetch(apiUrl, options)
+
     if (response.ok) {
       const data = await response.json()
+
       const updatedJobs = data.jobs.map(job => ({
         id: job.id,
         title: job.title,
@@ -71,6 +84,7 @@ class Jobs extends Component {
         companyLogoUrl: job.company_logo_url,
         jobDescription: job.job_description,
       }))
+
       this.setState({
         jobsList: updatedJobs,
         apiStatus: apiStatusConstants.success,
@@ -82,29 +96,44 @@ class Jobs extends Component {
 
   onChangeEmploymentType = event => {
     const {employmentTypes} = this.state
-    if (employmentTypes.includes(event.target.id)) {
+    const {id} = event.target
+
+    if (employmentTypes.includes(id)) {
       this.setState(
         {
-          employmentTypes: employmentTypes.filter(
-            each => each !== event.target.id,
-          ),
+          employmentTypes: employmentTypes.filter(each => each !== id),
         },
         this.getJobs,
       )
     } else {
+      this.setState({employmentTypes: [...employmentTypes, id]}, this.getJobs)
+    }
+  }
+
+  onChangeLocation = event => {
+    const {locations} = this.state
+    const {id} = event.target
+
+    if (locations.includes(id)) {
       this.setState(
-        {employmentTypes: [...employmentTypes, event.target.id]},
+        {
+          locations: locations.filter(each => each !== id),
+        },
         this.getJobs,
       )
+    } else {
+      this.setState({locations: [...locations, id]}, this.getJobs)
     }
   }
 
   onChangeSalaryRange = event => {
-    this.setState({salaryRange: event.target.id}, this.getJobs)
+    const {id} = event.target
+    this.setState({salaryRange: id}, this.getJobs)
   }
 
   onChangeSearchInput = event => {
-    this.setState({searchInput: event.target.value})
+    const {value} = event.target
+    this.setState({searchInput: value})
   }
 
   onClickSearch = () => {
@@ -122,7 +151,6 @@ class Jobs extends Component {
       <img
         src="https://assets.ccbp.in/frontend/react-js/failure-img.png"
         alt="failure view"
-        className="failure-img"
       />
       <h1>Oops! Something Went Wrong</h1>
       <p>We cannot seem to find the page you are looking for</p>
@@ -139,15 +167,17 @@ class Jobs extends Component {
         alt="no jobs"
       />
       <h1>No Jobs Found</h1>
-      <p>We could not find any jobs. Try other filters.</p>
+      <p>We could not find any jobs. Try other filters</p>
     </div>
   )
 
   renderJobsList = () => {
     const {jobsList} = this.state
+
     if (jobsList.length === 0) {
       return this.renderNoJobsView()
     }
+
     return (
       <ul className="jobs-list">
         {jobsList.map(job => (
@@ -159,13 +189,14 @@ class Jobs extends Component {
 
   renderAllJobs = () => {
     const {apiStatus} = this.state
+
     switch (apiStatus) {
+      case apiStatusConstants.inProgress:
+        return this.renderLoader()
       case apiStatusConstants.success:
         return this.renderJobsList()
       case apiStatusConstants.failure:
         return this.renderFailureView()
-      case apiStatusConstants.inProgress:
-        return this.renderLoader()
       default:
         return null
     }
@@ -180,6 +211,7 @@ class Jobs extends Component {
         <div className="jobs-container">
           <div className="filters-container">
             <Profile />
+
             <hr />
             <h1>Type of Employment</h1>
             <ul>
@@ -191,6 +223,21 @@ class Jobs extends Component {
                     onChange={this.onChangeEmploymentType}
                   />
                   <label htmlFor={each.employmentTypeId}>{each.label}</label>
+                </li>
+              ))}
+            </ul>
+
+            <hr />
+            <h1>Location</h1>
+            <ul>
+              {locationList.map(each => (
+                <li key={each.locationId}>
+                  <input
+                    type="checkbox"
+                    id={each.locationId}
+                    onChange={this.onChangeLocation}
+                  />
+                  <label htmlFor={each.locationId}>{each.label}</label>
                 </li>
               ))}
             </ul>

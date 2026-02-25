@@ -36,6 +36,12 @@ class JobItemDetails extends Component {
     }
   }
 
+  renderLoader = () => (
+    <div data-testid="loader">
+      <Loader type="ThreeDots" color="#ffffff" height="50" width="50" />
+    </div>
+  )
+
   renderFailureView = () => (
     <div className="failure-view-container">
       <img
@@ -54,76 +60,70 @@ class JobItemDetails extends Component {
     const {job, similarJobs} = this.state
 
     return (
-      <>
-        <Header />
+      <div className="job-details-container">
+        <img src={job.company_logo_url} alt="job details company logo" />
+        <h1>{job.title}</h1>
+        <p>{job.rating}</p>
+        <p>{job.location}</p>
+        <p>{job.employment_type}</p>
+        <p>{job.package_per_annum}</p>
 
-        <div className="job-details-container">
-          <img src={job.company_logo_url} alt="job details company logo" />
-          <h1>{job.title}</h1>
+        <h1>Description</h1>
+        <p>{job.job_description}</p>
 
-          <p>{job.rating}</p>
-          <p>{job.location}</p>
-          <p>{job.employment_type}</p>
-          <p>{job.package_per_annum}</p>
+        <a href={job.company_website_url} target="_blank" rel="noreferrer">
+          Visit
+        </a>
 
-          <h1>Description</h1>
-          <p>{job.job_description}</p>
-
-          <a href={job.company_website_url} target="_blank" rel="noreferrer">
-            Visit
-          </a>
-
-          <h1>Skills</h1>
-          <ul>
-            {job.skills.map(each => (
+        <h1>Skills</h1>
+        <ul>
+          {job.skills &&
+            job.skills.map(each => (
               <li key={each.name}>
                 <img src={each.image_url} alt={each.name} />
                 <p>{each.name}</p>
               </li>
             ))}
-          </ul>
+        </ul>
 
-          <h1>Life at Company</h1>
-          <img src={job.life_at_company.image_url} alt="life at company" />
-          <p>{job.life_at_company.description}</p>
+        <h1>Life at Company</h1>
+        {job.life_at_company && (
+          <>
+            <p>{job.life_at_company.description}</p>
+            <img src={job.life_at_company.image_url} alt="life at company" />
+          </>
+        )}
 
-          <h1>Similar Jobs</h1>
-          <ul>
-            {similarJobs.map(each => (
-              <li key={each.id}>
-                <img
-                  src={each.company_logo_url}
-                  alt="similar job company logo"
-                />
-                <h1>{each.title}</h1>
-                <p>{each.rating}</p>
-                <p>{each.location}</p>
-                <p>{each.employment_type}</p>
-                <p>{each.job_description}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </>
+        <h1>Similar Jobs</h1>
+        <ul>
+          {similarJobs.map(each => (
+            <li key={each.id}>
+              <img src={each.company_logo_url} alt="similar job company logo" />
+              <h1>{each.title}</h1>
+              <p>{each.rating}</p>
+              <p>{each.location}</p>
+              <p>{each.employment_type}</p>
+
+              <h1>Description</h1>
+              <p>{each.job_description}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
     )
   }
 
   render() {
     const {apiStatus} = this.state
 
-    if (apiStatus === 'LOADING') {
-      return (
-        <div data-testid="loader">
-          <Loader type="ThreeDots" color="#ffffff" height="50" width="50" />
-        </div>
-      )
-    }
-
-    if (apiStatus === 'FAILURE') {
-      return this.renderFailureView()
-    }
-
-    return this.renderSuccessView()
+    return (
+      <>
+        <Header />
+        {apiStatus === 'LOADING' && this.renderLoader()}
+        {apiStatus === 'FAILURE' && this.renderFailureView()}
+        {apiStatus === 'SUCCESS' && this.renderSuccessView()}
+      </>
+    )
   }
 }
 
