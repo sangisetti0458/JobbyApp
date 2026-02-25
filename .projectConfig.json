@@ -1,7 +1,6 @@
 {
   "ignoredFilesOrFolders": [],
   "openFiles": [
-    "enhancementOfJobbyApp/src/App.js",
     "enhancementOfJobbyApp/src/components/ProtectedRoute/index.js",
     "enhancementOfJobbyApp/src/App.css",
     "enhancementOfJobbyApp/src/components/Profile/index.js",
@@ -19,7 +18,8 @@
     "enhancementOfJobbyApp/src/components/Home/index.js",
     "enhancementOfJobbyApp/src/components/Home/index.css",
     "enhancementOfJobbyApp/src/components/Header/index.js",
-    "enhancementOfJobbyApp/src/components/Header/index.css"
+    "enhancementOfJobbyApp/src/components/Header/index.css",
+    "enhancementOfJobbyApp/package.json"
   ],
-  "fileToBeOpened": "enhancementOfJobbyApp/package.json"
+  "fileToBeOpened": "enhancementOfJobbyApp/src/App.js"
 }
